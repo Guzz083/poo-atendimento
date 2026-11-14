@@ -1,0 +1,133 @@
+@startuml diagrama-classes
+skinparam classAttributeIconSize 0
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam nodesep 60
+skinparam ranksep 70
+skinparam class {
+  BackgroundColor #F7FAFF
+  BorderColor #3D85C6
+  ArrowColor #333333
+  HeaderBackgroundColor #DCEAF7
+}
+title Sistema de Atendimento Médico — Diagrama de classes (1ª entrega)
+
+package "model" {
+  abstract class Usuario {
+    - id : int
+    - nome : String
+    - email : String
+    - senha : String
+    - criadoEm : LocalDateTime
+    --
+    + {abstract} getPerfil() : Perfil
+    + getId() : int
+    + setId(id : int) : void
+    + getNome() : String
+    + setNome(nome : String) : void
+    + getEmail() : String
+    + setEmail(email : String) : void
+    + getSenha() : String
+    + setSenha(senha : String) : void
+    + getCriadoEm() : LocalDateTime
+    + setCriadoEm(criadoEm : LocalDateTime) : void
+    + toString() : String
+  }
+
+  class Medico {
+    - crm : String
+    - especialidade : String
+    --
+    + getPerfil() : Perfil
+    + getCrm() : String
+    + setCrm(crm : String) : void
+    + getEspecialidade() : String
+    + setEspecialidade(especialidade : String) : void
+    + toString() : String
+  }
+
+  class Secretaria {
+    + getPerfil() : Perfil
+    + toString() : String
+  }
+
+  class Paciente {
+    - cpf : String
+    - telefone : String
+    --
+    + getPerfil() : Perfil
+    + getCpf() : String
+    + setCpf(cpf : String) : void
+    + getTelefone() : String
+    + setTelefone(telefone : String) : void
+    + getCpfFormatado() : String
+    + toString() : String
+  }
+
+  class Consulta {
+    - id : int
+    - paciente : Paciente
+    - medico : Medico
+    - dataHora : LocalDateTime
+    - status : StatusConsulta
+    - observacoes : String
+    --
+    + Consulta(paciente : Paciente, medico : Medico, dataHora : LocalDateTime)
+    + getPaciente() : Paciente
+    + setPaciente(paciente : Paciente) : void
+    + getMedico() : Medico
+    + setMedico(medico : Medico) : void
+    + getDataHora() : LocalDateTime
+    + setDataHora(dataHora : LocalDateTime) : void
+    + getStatus() : StatusConsulta
+    + setStatus(status : StatusConsulta) : void
+    + getObservacoes() : String
+    + setObservacoes(observacoes : String) : void
+    + toString() : String
+  }
+
+  enum Perfil {
+    MEDICO
+    SECRETARIA
+    PACIENTE
+    --
+    - valorBanco : String
+    + getValorBanco() : String
+    + {static} deValorBanco(valor : String) : Perfil
+  }
+
+  enum StatusConsulta {
+    AGENDADA
+    REALIZADA
+    CANCELADA
+    --
+    - valorBanco : String
+    + getValorBanco() : String
+    + {static} deValorBanco(valor : String) : StatusConsulta
+  }
+}
+
+package "db" {
+  class ConexaoBD <<final>> {
+    - {static} ARQUIVO : String = "db.properties"
+    --
+    + {static} getConnection() : Connection
+  }
+}
+
+Usuario <|-down- Medico
+Usuario <|-down- Secretaria
+Usuario <|-down- Paciente
+Usuario .right.> Perfil : <<usa>>
+
+Medico "1" <-down- "0..*" Consulta : medico
+Paciente "1" <-down- "0..*" Consulta : paciente
+Consulta -right-> "1" StatusConsulta : status
+Secretaria -[hidden]down- ConexaoBD
+
+note left of Usuario
+  Os setters validam e lançam IllegalArgumentException (RN01):
+  nome obrigatório, e-mail válido e em minúsculas, senha com 6+ caracteres.
+end note
+@enduml

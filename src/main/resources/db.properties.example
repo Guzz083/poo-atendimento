@@ -1,0 +1,5 @@
+# Copie este arquivo para db.properties (nesta mesma pasta) e preencha a senha.
+# O db.properties NÃO vai para o Git (RNF03).
+db.url=jdbc:mysql://localhost:3306/atendimento_medico
+db.usuario=root
+db.senha=sua-senha

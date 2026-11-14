@@ -1,0 +1,12 @@
+# Credenciais reais (RNF03) — só o db.properties.example vai para o Git
+src/main/resources/db.properties
+db.properties
+
+# Maven / IDEs
+target/
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
